@@ -34,12 +34,12 @@ import { defineProps } from 'vue'
 
 const props = defineProps(['poster', 'title', 'movieId'])
 const { poster, title, movieId } = props
-console.log(movieId)
 const store = useMoviesStore()
 
-const { isTrailerOpen } = storeToRefs(store)
+const { isTrailerOpen, selectedPoster } = storeToRefs(store)
 
 const openTrailer = () => {
   isTrailerOpen.value = true
+  selectedPoster.value = movieId
 }
 </script>

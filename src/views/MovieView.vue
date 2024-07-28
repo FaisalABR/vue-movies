@@ -15,6 +15,7 @@
           :key="movie.id"
           :poster="movie.poster_path"
           :title="movie.original_title"
+          :movieId="movie.id"
         />
       </div>
     </div>

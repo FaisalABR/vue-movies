@@ -1,9 +1,7 @@
 <template>
   <div class="w-full relative flex items-center h-screen">
     <img
-      :src="
-        'https://image.tmdb.org/t/p/original' + detailMovie?.belongs_to_collection.backdrop_path
-      "
+      :src="'https://image.tmdb.org/t/p/original' + detailMovie?.backdrop_path"
       alt="Despicable me"
       class="w-full h-screen absolute top-0 object-cover"
     />
@@ -35,37 +33,21 @@
         <div class="flex flex-col gap-3 w-full">
           <h3 class="text-white text-xl font-semibold">Casts</h3>
           <div class="w-full grid grid-cols-4 mt-3">
-            <div class="flex flex-col items-center gap-2">
-              <img src="" class="bg-red-500 size-20 rounded-full object-cover" />
-              <span class="text-white">John Doe</span>
-            </div>
-            <div class="flex flex-col items-center gap-2">
-              <img src="" class="bg-red-500 size-20 rounded-full object-cover" />
-              <span class="text-white">John Doe</span>
-            </div>
-            <div class="flex flex-col items-center gap-2">
-              <img src="" class="bg-red-500 size-20 rounded-full object-cover" />
-              <span class="text-white">John Doe</span>
-            </div>
-            <div class="flex flex-col items-center gap-2">
-              <img src="" class="bg-red-500 size-20 rounded-full object-cover" />
-              <span class="text-white">John Doe</span>
-            </div>
-            <div class="flex flex-col items-center gap-2">
-              <img src="" class="bg-red-500 size-20 rounded-full object-cover" />
-              <span class="text-white">John Doe</span>
-            </div>
-            <div class="flex flex-col items-center gap-2">
-              <img src="" class="bg-red-500 size-20 rounded-full object-cover" />
-              <span class="text-white">John Doe</span>
-            </div>
-            <div class="flex flex-col items-center gap-2">
-              <img src="" class="bg-red-500 size-20 rounded-full object-cover" />
-              <span class="text-white">John Doe</span>
-            </div>
-            <div class="flex flex-col items-center gap-2">
-              <img src="" class="bg-red-500 size-20 rounded-full object-cover" />
-              <span class="text-white">John Doe</span>
+            <div
+              class="flex flex-col items-center gap-2"
+              v-for="credit in credits"
+              :key="credit.id"
+            >
+              <img
+                :src="'https://image.tmdb.org/t/p/original' + credit?.profile_path"
+                class="size-20 rounded-full object-cover"
+                @error="
+                  ($e) =>
+                    ($e.target.src =
+                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXCvxaCmrRH7JgHSuhSvtER33sfmRdQRKc6A&s')
+                "
+              />
+              <span class="text-white">{{ credit?.original_name }}</span>
             </div>
           </div>
         </div>
@@ -76,15 +58,30 @@
 
 <script setup>
 import { useMoviesStore } from '@/stores/movies'
+import { storeToRefs } from 'pinia'
 // import { storeToRefs } from 'pinia'
-import { onMounted } from 'vue'
+import { onMounted, watch, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const store = useMoviesStore()
-const { fetchDetailMovie, detailMovie } = store
+
+const { detailMovie, credits } = storeToRefs(store)
+
+// const cast = ref(credits.value.cast)
+const currentMovieId = ref(route.params.id)
 
 onMounted(() => {
-  fetchDetailMovie('movie', 1022789)
+  store.fetchDetailMovie('movie', currentMovieId.value)
+  store.fetchCredits('movie', currentMovieId.value)
 })
 
-console.log(detailMovie)
+watch(
+  () => route.params.id,
+  (newId) => {
+    currentMovieId.value = newId
+    store.fetchDetailMovie('movie', newId)
+    store.fetchCredits('movie', newId)
+  }
+)
 </script>

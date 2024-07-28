@@ -30,3 +30,33 @@ export const callDetailAPI = async (category, id) => {
     return error
   }
 }
+
+export const callCreditsAPI = async (category, id) => {
+  try {
+    const response = await fetch(`${BASE_URL}/${category}/${id}/credits?language=en-US`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`
+      }
+    })
+
+    return response.json()
+  } catch (error) {
+    return error
+  }
+}
+
+export const callVideoAPI = async (category, id) => {
+  try {
+    const response = await fetch(`${BASE_URL}/${category}/${id}/videos?language=en-US`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`
+      }
+    })
+
+    return response.json()
+  } catch (error) {
+    return error
+  }
+}

@@ -14,7 +14,8 @@
           v-for="movie in store.tvPage"
           :key="movie.id"
           :poster="movie.poster_path"
-          :title="movie.original_title"
+          :title="movie.original_name"
+          :movieId="movie.id"
         />
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { callAPI, callDetailAPI } from '@/api'
+import { callAPI, callCreditsAPI, callDetailAPI, callVideoAPI } from '@/api'
 
 export const useMoviesStore = defineStore('movie', () => {
   const heroMovies = ref([])
@@ -13,7 +13,10 @@ export const useMoviesStore = defineStore('movie', () => {
   const tvPage = ref([])
   const error = ref(null)
   const isTrailerOpen = ref(false)
-  const detailMovie = ref({})
+  const detailMovie = ref(null)
+  const credits = ref(null)
+  const video = ref(null)
+  const selectedPoster = ref(null)
 
   const fetchMovies = async (endpoint) => {
     const [, category] = endpoint.split('/')
@@ -62,16 +65,41 @@ export const useMoviesStore = defineStore('movie', () => {
       } else {
         tvPage.value = [...tvPage.value, ...response.results]
       }
+      console.log(response.results)
     } catch (e) {
       return e
     }
   }
 
   const fetchDetailMovie = async (endpoint, id) => {
+    detailMovie.value = null
     try {
       const response = await callDetailAPI(endpoint, id)
-      console.log(response)
       detailMovie.value = response
+    } catch (e) {
+      return e
+    }
+  }
+
+  const fetchCredits = async (endpoint, id) => {
+    credits.value = null
+    try {
+      const response = await callCreditsAPI(endpoint, id)
+      const data = await response.cast
+      credits.value = data.slice(0, 8)
+      console.log(credits.value)
+    } catch (e) {
+      return e
+    }
+  }
+
+  const fetchVideos = async (endpoint, id) => {
+    video.value = null
+    try {
+      const response = await callVideoAPI(endpoint, id)
+
+      video.value = await response.results[0].key
+      console.log(video.value)
     } catch (e) {
       return e
     }
@@ -82,11 +110,16 @@ export const useMoviesStore = defineStore('movie', () => {
     movies,
     isTrailerOpen,
     fetchMovies,
+    detailMovie,
     fetchMoviesMore,
     moviesPage,
     tvPage,
     fetchTvMore,
     fetchDetailMovie,
-    detailMovie
+    credits,
+    fetchCredits,
+    video,
+    fetchVideos,
+    selectedPoster
   }
 })

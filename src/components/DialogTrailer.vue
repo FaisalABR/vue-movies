@@ -12,7 +12,7 @@
           X
         </button>
       </div>
-      <iframe src="https://www.youtube.com/embed/5N0fD0GMm2g" class="w-full h-[calc(100%-100px)]" />
+      <iframe :src="'https://www.youtube.com/embed/' + video" class="w-full h-[calc(100%-100px)]" />
     </h1>
   </div>
 </template>
@@ -20,11 +20,21 @@
 <script setup>
 import { useMoviesStore } from '@/stores/movies'
 import { storeToRefs } from 'pinia'
+import { onMounted } from 'vue'
 
 const store = useMoviesStore()
 
-const { isTrailerOpen } = storeToRefs(store)
+const { isTrailerOpen, selectedPoster, video } = storeToRefs(store)
+
 const closeTrailer = () => {
   isTrailerOpen.value = false
 }
+
+console.log(selectedPoster.value)
+console.log(isTrailerOpen.value)
+console.log(video)
+
+onMounted(() => {
+  store.fetchVideos('movie', selectedPoster.value)
+})
 </script>
